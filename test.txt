@@ -395,3 +395,41 @@ Sub SaveActiveSheetToFile()
     newWb.Close SaveChanges:=False
 End Sub
 
+
+Sub SaveAndDisplayActiveSheetEmail()
+    Dim savePath As String
+    Dim emailRecipients As String
+    Dim emailSubject As String
+    Dim emailBody As String
+    Dim attachmentPath As String
+    Dim dateStr As String
+    Dim ws As Worksheet
+    
+    ' Get the active worksheet
+    Set ws = ActiveSheet
+    
+    ' Check if N4 contains a valid date
+    If IsDate(ws.Range("N4").Value) Then
+        ' Format the date string as yyyymmdd
+        dateStr = Format(DateValue(ws.Range("N4").Value), "yyyymmdd") & "_name"
+    Else
+        MsgBox "Cell N4 does not contain a valid date.", vbCritical
+        Exit Sub
+    End If
+    
+    ' Define the save path
+    savePath = "C:\Path\To\Your\" & dateStr & ".xlsx"
+    attachmentPath = savePath
+    
+    ' Save the active sheet to a new file
+    Call SaveActiveSheetToFile
+    
+    ' Define your email variables
+    emailRecipients = "example@example.com" ' Recipient email addresses
+    emailSubject = "Subject of the Email"
+    emailBody = "Body text of the email"
+    
+    ' Display the email with the attachment
+    Call DisplayEmailWithAttachment(emailRecipients, emailSubject, emailBody, attachmentPath)
+End Sub
+
