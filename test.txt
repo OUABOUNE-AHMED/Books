@@ -152,6 +152,32 @@ Sub SendEmailWithAttachment(toEmails As String, subject As String, bodyText As S
 End Sub
 
 
+
+Sub DisplayEmailWithAttachment(toEmails As String, subject As String, bodyText As String, attachmentPath As String)
+    Dim OutlookApp As Object
+    Dim OutlookMail As Object
+    
+    ' Create Outlook application object
+    Set OutlookApp = CreateObject("Outlook.Application")
+    
+    ' Create a new mail item
+    Set OutlookMail = OutlookApp.CreateItem(0)
+    
+    With OutlookMail
+        .To = toEmails
+        .Subject = subject
+        .Body = bodyText
+        .Attachments.Add attachmentPath
+        .Display ' Display the email to the user before sending
+    End With
+    
+    ' Clean up
+    Set OutlookMail = Nothing
+    Set OutlookApp = Nothing
+End Sub
+
+
+
 Sub SaveAndDisplayActiveSheetEmail()
     Dim savePath As String
     Dim emailRecipients As String
