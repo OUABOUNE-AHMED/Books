@@ -1,0 +1,49 @@
+Sub SaveSheetToFile(sheetName As String, filePath As String)
+    Dim ws As Worksheet
+    Dim wb As Workbook
+    Dim newWb As Workbook
+
+    ' Get the worksheet
+    Set ws = ThisWorkbook.Sheets(sheetName)
+    
+    ' Create a new workbook
+    Set newWb = Workbooks.Add
+    
+    ' Copy the worksheet to the new workbook
+    ws.Copy Before:=newWb.Sheets(1)
+    
+    ' Remove the default sheets from the new workbook
+    Application.DisplayAlerts = False
+    For Each ws In newWb.Sheets
+        If ws.Name <> sheetName Then ws.Delete
+    Next ws
+    Application.DisplayAlerts = True
+    
+    ' Save the new workbook
+    newWb.SaveAs filePath
+    newWb.Close SaveChanges:=False
+End Sub
+
+
+Sub SendEmailWithAttachment(toEmails As String, subject As String, bodyText As String, attachmentPath As String)
+    Dim OutlookApp As Object
+    Dim OutlookMail As Object
+    
+    ' Create Outlook application object
+    Set OutlookApp = CreateObject("Outlook.Application")
+    
+    ' Create a new mail item
+    Set OutlookMail = OutlookApp.CreateItem(0)
+    
+    With OutlookMail
+        .To = toEmails
+        .Subject = subject
+        .Body = bodyText
+        .Attachments.Add attachmentPath
+        .Send
+    End With
+    
+    ' Clean up
+    Set OutlookMail = Nothing
+    Set OutlookApp = Nothing
+End Sub
