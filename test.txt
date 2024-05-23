@@ -47,3 +47,30 @@ Sub SendEmailWithAttachment(toEmails As String, subject As String, bodyText As S
     Set OutlookMail = Nothing
     Set OutlookApp = Nothing
 End Sub
+
+
+
+
+Sub SaveAndSendSheet()
+    Dim sheetName As String
+    Dim savePath As String
+    Dim emailRecipients As String
+    Dim emailSubject As String
+    Dim emailBody As String
+    Dim attachmentPath As String
+    
+    ' Define your variables
+    sheetName = "Sheet1" ' Name of the sheet you want to save
+    savePath = "C:\Path\To\Your\File.xlsx" ' Path to save the new Excel file
+    emailRecipients = "example@example.com" ' Recipient email addresses
+    emailSubject = "Subject of the Email"
+    emailBody = "Body text of the email"
+    attachmentPath = savePath
+    
+    ' Save the sheet to a new file
+    Call SaveSheetToFile(sheetName, savePath)
+    
+    ' Send the email with the attachment
+    Call SendEmailWithAttachment(emailRecipients, emailSubject, emailBody, attachmentPath)
+End Sub
+
