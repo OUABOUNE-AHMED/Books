@@ -433,3 +433,62 @@ Sub SaveAndDisplayActiveSheetEmail()
     Call DisplayEmailWithAttachment(emailRecipients, emailSubject, emailBody, attachmentPath)
 End Sub
 
+
+
+Sub SaveActiveSheetToFile()
+    Dim ws As Worksheet
+    Dim newWb As Workbook
+    Dim newWs As Worksheet
+    Dim shp As Shape
+    Dim chartObj As ChartObject
+    Dim newChartObj As ChartObject
+    Dim savePath As String
+    Dim dateStr As String
+    
+    ' Get the active worksheet
+    Set ws = ActiveSheet
+    
+    ' Check if N4 contains a valid date
+    If IsDate(ws.Range("N4").Value) Then
+        ' Format the date string as yyyymmdd
+        dateStr = Format(DateValue(ws.Range("N4").Value), "yyyymmdd") & "_name"
+    Else
+        MsgBox "Cell N4 does not contain a valid date.", vbCritical
+        Exit Sub
+    End If
+    
+    ' Define the save path
+    savePath = "C:\Path\To\Your\" & dateStr & ".xlsx"
+    
+    ' Create a new workbook
+    Set newWb = Workbooks.Add
+    Set newWs = newWb.Sheets(1)
+    
+    ' Copy used range (text content) to new sheet
+    ws.UsedRange.Copy Destination:=newWs.Range("A1")
+    
+    ' Copy each chart individually while maintaining the links to the data
+    For Each chartObj In ws.ChartObjects
+        chartObj.Copy
+        newWs.Paste
+        Set newChartObj = newWs.ChartObjects(newWs.ChartObjects.Count)
+        newChartObj.Top = chartObj.Top
+        newChartObj.Left = chartObj.Left
+        newChartObj.Width = chartObj.Width
+        newChartObj.Height = chartObj.Height
+        Application.CutCopyMode = False
+    Next chartObj
+    
+    ' Remove default sheets if any
+    Application.DisplayAlerts = False
+    Dim defaultWs As Worksheet
+    For Each defaultWs In newWb.Sheets
+        If defaultWs.Index > 1 Then defaultWs.Delete
+    Next defaultWs
+    Application.DisplayAlerts = True
+    
+    ' Save the new workbook
+    newWb.SaveAs Filename:=savePath, FileFormat:=xlOpenXMLWorkbook ' Save as .xlsx without macros
+    newWb.Close SaveChanges:=False
+End Sub
+
